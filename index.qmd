@@ -2,7 +2,7 @@
 title: Distinct functional responses of consumers and their producers to climate drive mutualistic network asymmetry
 subtitle: Functional Asymmetry in Ecological Networks
 abstract: |
-  **Aim:** Functional traits are often used to infer the ecological processes that determine the composition of species assemblages. However, most trait-based approaches to infer community assembly processes focus on a single trophic level. Owing to the matching of traits facilitating interactions between resource and consumer assemblages, the functional trait diversity of different trophic levels is expected to covary in space. However, differential response of consumers and producers to environmental gradients can cause a decoupling of functional diversity between trophic levels, which we coin functional trophic asymmetry. Here, we develop a metric to quantify functional trophic asymmetry (FTA) and use it to infer the processes underpinning multitrophic community assembly, and explore the role of these processes in shaping the topology of ecological networks. 
+  **Aim:** Functional traits are often used to infer the ecological processes that determine the composition of species assemblages. Whereas most trait-based approaches to infer community assembly processes focus on a single trophic level, traits also mediate interactions between trophic levels.  Owing to the matching of traits facilitating interactions between resource and consumer assemblages, the functional trait diversity of different trophic levels is expected to covary in space. However, the differential response of consumers and producers to environmental gradients can cause a decoupling of functional diversity between trophic levels, which we coin functional trophic asymmetry. Here, we develop a metric to quantify functional trophic asymmetry (FTA) and use it to infer the processes underpinning multitrophic community assembly and explore the role of these processes in shaping the topology of ecological networks.
   
   **Location:** Neotropics.
   
@@ -10,11 +10,11 @@ abstract: |
   
   **Major taxa:** Mammalian frugivores and palms.
   
-  **Methods:** We use digitally available data on the functional traits, pairwise mutualistic interactions, and geographic distributions of consumers (mammalian frugivores) and their producers (palms) to quantify functional trophic asymmetry for species occurring in the Neotropics. To cover major data gaps between species-level trait and interaction data, we train machine learning models to generate synthetic network data. We then use linear regression models to relate functional asymmetry to variation in climate, and to assess the influence of functional asymmetry on network specialization.
+  **Methods:** We used digitally available data on the functional traits, pairwise mutualistic interactions, and geographic distributions of consumers (mammalian frugivores) and their producers (palms) to quantify FTA for species assemblages occurring in the Neotropics. To cover major data gaps between species-level trait and interaction data at finer spatial grain, we trained machine learning models to downscale the continental meta-network to grid cell-level networks. For each grid-cell, we also estimated FTA for all combinations of interaction guilds. These guilds were defined as distinct subsets of producer and consumer assemblages playing similar roles within mutualistic networks and sharing partners in the other trophic level. We then use generalized additive models to relate geographic variation in FTA to variation in climatic variables and assessed whether the strength of these relationship varied among pairwise interaction guilds. Finally, we then examined the relationship between FTA and network specialization.
   
-  **Results:** Our approach generated probabilistic networks across 1,072 grid cells in the Neotropics, revealing networks with a clearly defined modular structure and substantial differences in their functional richness across trophic levels. Functional trophic asymmetry increases from regions of the Neotropics with low precipitation seasonality to regions with high precipitation seasonality. Along this same climatic gradient, network specialization is positively related to functional trophic asymmetry.
+  **Results:** By downscaling the continental metaweb, we generated probabilistic networks across 1,072 grid cells in the Neotropics. Our modelling approach identified 7 consumer and 7 producer interaction guilds. Assemblage-wide FTA is negatively related to annual mean temperatures across the neotropics. When considering individual interaction guilds, precipitation seasonality is positively related to FTA. This relationship between FTA and precipitation seasonality was stronger for consumer and producer guild combinations with high predicted interaction strength. Finally, network specialization was positively  related to FTA, regardless of the interaction guild combination.
   
-  **Main conclusions:** Our results further suggest that mutualistic interactions between palms and mammals are mediated by matching traits and taxonomic overlap as a key assembly process at the regional scale. We conclude that increased warming and seasonal shifts in precipitation caused by global climate change could disproportionately impact specialist species while increasing functional trophic asymmetry in ecological networks.
+  **Main conclusions:** Mutualistic networks in warm regions with seasonal rainfalls, where the environment imposes a disproportionately strong selective pressure on palms relative to mammal frugivores, exhibit higher levels of functional trophic asymmetry. This relationship is particularly strong when considering guilds predicted to strongly interact in nature.  Assemblages exhibiting high FTA also tend to have high levels of network specialization, suggesting that differences in the strength of environmental selection among trophic levels favor the persistence of specialist species in these mutualistic interaction networks.    We therefore conclude that future increases in temperature and the magnitude of precipitation seasonality caused by global climate change could lead to more specialized mutualistic networks which are more prone to collapse when facing further threats and local extinctions.
 author:
   - name: Gabriel Munoz
     orcid: 0000-0002-0760-5497
@@ -165,619 +165,666 @@ in the tropics [@bogoni2020extent; @marques2022mutualism]. Mammalian
 frugivores facilitate the dispersal of palm fruits, which helps to
 prevent local extinctions amid disturbance and to maintain biodiversity
 in these ecological networks [@acevedo2020sampling;
-@messeder2020searching; @dehling2018structure]. Exploring patterns of
-co-variation in the functional richness of palm and frugivore
-assemblages along environmental gradients is a first step in this
-direction. Here, we ask (1) which climatic variable(s) best explains
-variation in the functional richness of palms vs mammal frugivores, (2)
+@messeder2020searching; @dehling2018structure]. To effectively preserve
+these interactions, it is crucial to understand how palm (producer) and
+frugivore (consumer) communities together respond to environmental
+gradients [@pereira2022priority]. By examining the co-variation in their
+functional richness across broad geographic scales and link those
+patterns to spatial and/or temporal variation in climate, we can
+identify key abiotic factors that influence the assembly of their
+mutualistic relationships [@albrecht2018plant; @schleuning2020trait].
+Here, we ask (1) which climatic variable(s) best explains geographic
+variation in the functional richness of palms and mammal frugivores, (2)
 whether differences in these relationships lead to functional trophic
-asymmetry, (3) where does functional asymmetry peaks in the Neotropics
-and (4) whether asymmetry relates to network specialization.
+asymmetry (hereafter FTA), and (3) which climatic variable best explains
+geographic variation in FTA across the Neotropics. We also ask (4)
+whether the strength of interactions between palms and mammal frugivores
+that occupy similar roles in the mutualistic network relates to the
+strength of the relationship between FTA and climate. Finally, we ask
+(5) whether geographic variation in FTA relates to network
+specialization.
+
+![**Figure 1:** This conceptual model illustrates the dynamic
+relationship between functional diversity metrics—specifically
+Functional Richness (FR) and Functional Trait Asymmetry (FTA)—and
+environmental gradients within ecological networks. The left panel of
+**Figure A** visualizes the variation in FR for producers (depicted in
+green) and consumers (depicted in orange) along an environmental
+gradient. As the environmental gradient intensifies (e.g., through
+changes in temperature, precipitation, or habitat fragmentation), FR for
+both producers and consumers generally declines. However, this decline
+can occur at different rates, leading to two scenarios: (1)
+**Differential Decline in FR**: If consumer FR declines more sharply
+than producer FR, a substantial increase in Functional Trait Asymmetry
+(FTA) occurs. (2) **Parallel Decline in FR**: Alternatively, if both
+producer and consumer FRs decline at a similar rate, FTA remains
+relatively constant along the gradient. This scenario indicates a
+balanced impact of environmental changes across trophic levels,
+preserving the relative functional relationship between producers and
+consumers. **Figure B** shifts focus to the implications of changing FTA
+on network specialization—a measure of how distinct or generalized
+interactions are between producers and consumers within ecological
+networks. **Higher Specialization**: This scenario, shown on the left
+side of the gradient, involves more distinct producer-consumer
+interactions, where specific consumer species interact with particular
+producer species. This high specialization often correlates with low
+FTA, where the functional traits between interacting species are closely
+aligned. **Lower Specialization**: As environmental stress increases,
+leading to a higher FTA, the network may shift towards lower
+specialization. In this state, interactions become more generalized,
+with consumers utilizing a broader range of producers due to the loss of
+specific functional
+traits.](Main_figures/00_Figure1.png){fig-align="center"}
 
 # Methods
-
-In this study, we investigated the variation of functional trophic
-asymmetry and network specialization along climatic gradients by
-gathering species-level information on traits, interactions, and
-distributions from literature, museum specimens, and field collections.
-The collected data were then processed to create synthetic networks
-across gridded regions of the Neotropics and to calculate functional
-trophic asymmetry and network specialization variables, followed by
-using climate data to explain the variation in these variables across
-the Neotropics (Figure S1).
 
 ## Study system
 
 We focused on multitrophic communities of Neotropical palms and their
-mutualistic, seed dispersing, mammalian frugivores. Palms
+mutualistic, seed dispersing, mammalian frugivores (Figure S1). Palms
 (Plantae:Arecaceae), being a keystone plant family in tropical regions
-[@kissling2012towards; @onstein2017frugivory], provide fruit resources
-to a wide variety of vertebrate frugivores, including birds and mammals
-[@munoz2019synthesis; @zona1989review]. Frugivore mammals
-(Animalia:Mammalia) are among the most important palm-seed dispersers,
-particularly over long distances. Most frugivore mammals feeding on
-palms are seed eaters and pulp eaters, dispersing palm seeds mostly via
-ectozoochorus dispersal [@messeder2020searching]. Importantly,
-frugivory-related traits have notably underlain palm diversification and
-played a key role in the evolution of palm traits
-[@onstein2014diversification; @onstein2017frugivory]
+(Kissling et al. 2012; Onstein et al. 2017), provide fruit resources to
+a wide variety of vertebrate frugivores, including birds and mammals
+(Muñoz, Trøjelsgaard, and Kissling 2019; Zona and Henderson 1989).
+Frugivore mammals (Animalia:Mammalia) are among the most important
+palm-seed dispersers, particularly over long distances. Most frugivore
+mammals feeding on palms are seed eaters and pulp eaters, dispersing
+palm seeds mostly via ectozoochorus dispersal (Messeder et al. 2020).
+Importantly, frugivory-related traits have notably underlain palm
+diversification and played a key role in the evolution of palm traits
+(Onstein et al. 2014, 2017)
 
-## Data collection
-
-### Species level geographic distribution data
+### Geographic distribution data
 
 We obtained binary species distribution data (present/absent) on palms
-from the geographic range maps of [@bjorholm2005environmental] and on
-mammals from the IUCN (International Union for the Conservation of
-Nature) data portal. To generate local gridded multitrophic species
-assemblages across the Neotropics, we intersected the species-level
-range maps with a spatial grid where each grid cell represented every 1
-by 1 degree latitude and longitude change along the extent of the entire
-Neotropics. We then listed all palm and mammal frugivore species
-co-occurring in each grid-cell as our grid-cell level multitrophic
-assemblage.
+from the geographic range maps of (Bjorholm et al. 2005) and on mammals
+from the IUCN (International Union for the Conservation of Nature) data
+portal. To generate local gridded multitrophic species assemblages
+across the Neotropics, we intersected the species-level range maps with
+a spatial grid where each grid cell represented every 1 by 1 degree
+latitude and longitude change along the extent of the entire Neotropics.
+We then listed all palm and mammal frugivore species co-occurring in
+each grid-cell as our grid-cell level multitrophic assemblage.
 
-### Species level trait data
+### Trait data
 
 We collected species-level multitrophic trait data related to the
 physiological tolerance of palms and frugivorous mammals to the abiotic
 environment and to their mutualistic interactions. For palms, we
-extracted data from the PalmTraits 1.0 dataset
-[@kissling2019palmtraits]. We collected data on growth form, maximum
-stem height, and average fruit length. For frugivorous mammals, we
-obtained trait data from the EltonTraits 1.0 database
-[@wilman2014eltontraits]. We selected data on body mass, diet, and daily
-activities. Diet data from the EltonTraits 1.0 database is coded as
-percentage use distribution across ten diet categories. We excluded from
-our analysis species without fruit in their diet. Activity was coded as
-a dummy variable with three categories (Diurnal, Crepuscular,
-Nocturnal). Finally, body mass was coded as a numerical variable in kg.
-We excluded bats from the analysis as almost no Neotropical bat species
-is feeding on palm fruits [@messeder2020searching]. In total, we subset
-from this dataset the species with available distribution range map,
-that is 494 palm species and 737 mammal frugivores.
+extracted data from the PalmTraits 1.0 dataset (Kissling et al. 2019).
+We collected data on growth form, maximum stem height, and average fruit
+length. For frugivorous mammals, we obtained trait data from the
+EltonTraits 1.0 database (Wilman et al. 2014). We selected data on body
+mass, diet, and daily activities. Diet data from the EltonTraits 1.0
+database is coded as percentage use distribution across ten diet
+categories. We excluded from our analysis species without fruit in their
+diet. Activity was coded as a dummy variable with three categories
+(Diurnal, Crepuscular, Nocturnal). Finally, body mass was coded as a
+numerical variable in kg. We excluded bats from the analysis as almost
+no Neotropical bat species is feeding on palm fruits (Messeder et al.
+2020). In total, we subset from this dataset the species with available
+distribution range map, that is 494 palm species and 737 mammal
+frugivores.
 
-### Pairwise species level interaction data
+### Pairwise interaction data
 
 We used data on seed dispersal interactions between palms and mammals
 for the Neotropics, originating from recollections of seed dispersal
 records found in the published literature and interaction records are
-recorded at the species level [@munoz2019synthesis]. Each pairwise
-species interaction record reflects where an article mentions the fruit
-or the seed of a palm being dispersed, carried or defecated by a
-frugivorous mammal. Interaction records collected in this database were
-previously vetted to reflect effective seed dispersal interactions,
-while avoiding those that reflect mere seed consumption (vetting
-criteria found in: [@munoz2019synthesis]). In total, we gathered a total
-of 581 interaction records between 69 palms and 111 frugivore mammals.
+recorded at the species level (Muñoz, Trøjelsgaard, and Kissling 2019).
+Each pairwise species interaction record reflects where an article
+mentions the fruit or the seed of a palm being dispersed, carried or
+defecated by a frugivorous mammal. Interaction records collected in this
+database were previously vetted to reflect effective seed dispersal
+interactions, while avoiding those that reflect mere seed consumption
+(vetting criteria found in: Muñoz, Trøjelsgaard, and Kissling 2019). In
+total, we gathered a total of 581 interaction records between 69 palms
+and 111 frugivore mammals.
 
-### Grid-cell level environmental data
+### Environmental data
 
-We used bioclimatic variables from WorldClim [@fick2017worldclim] to
+We used bioclimatic variables from WorldClim (Fick and Hijmans 2017) to
 represent large-scale spatial and temporal variation of climate in the
 Neotropics. Specifically, we used mean annual temperature (BIO01), total
 annual precipitation (BIO12), temperature seasonality (BIO04) and
 precipitation seasonality (BIO15). Using a moving window, we compute
 simple averages for every set of bioclimatic records at each grid cell,
 thereby re-scaling the spatial resolution of bioclimatic variables to 1
-by 1 degree grid resolution from their original resolution (1 by 1 km2)
+by 1 degree grid resolution from their original resolution (1 ´ 1 km^2^)
 to match the spatial resolution of our grid cell species-level data.
 
-### Continental level biogeographical data
+### Species pool delineation
 
 The Neotropics is a region with a rich evolutionary history which
 significantly influenced patterns of species colonization and extinction
-across neotropical plant and animal species [@whiteman2015into;
-@antonelli2011there] . The biogeographic regionalization patterns of
-[@morrone2014biogeographical] distinguish seven major biogeographic
-regions (i.e., biogeographic dominions), we use them to delineate the
-spatial extent of species pools when simulating network assembly
-processes.
+across neotropical plant and animal species (Whiteman-Jennings 2015;
+Antonelli and Sanmartı́n 2011).We used the biogeographic regionalization
+of Morrone (2014) to delineate the spatial extent of species pools when
+simulating network assembly processes. These seven major biogeographic
+regions (i.e., biogeographic dominions) were delineated based on
+evolutionary history, distributional patterns and ecological
+characteristics of both plants and animals in the Neotropics.  
 
-## Statistical analyses
+## **Statistical analyses**
 
-### A probabilistic continental metaweb
+### *Building a probabilistic continental metaweb from aggregated binary interaction records*
 
-Here, we fitted latent variable models that vary in their assumptions to
-estimate interaction probabilities from observed binary data on species
-interactions. Specifically: the stochastic block model (SBM), the
-connectance model, the trait-matching model, and the matching-centrality
-model [@terry2020finding]. The SBM assumes that ecological networks are
-modular, with species interacting more within their groups, and outputs
-an two incidence matrix for palm and mammal species group affiliations,
-and a squared matrix (Theta matrix) for interaction probabilities. The
+Here, we fitted latent variable network structural models that vary in
+their assumptions to estimate interaction probabilities from observed
+binary data on species interactions. Specifically, we tested: the
+stochastic block model (SBM), the connectance model, the trait-matching
+model, and the matching-centrality model (Terry and Lewis 2020). The SBM
+assumes that ecological networks are modular, with species of consumers
+interacting more within their preferred groups of producers (i.e.,
+interaction guilds). The outputs of this model are one species-guild
+incidence matrix for palm assemblages, one for mammal assemblages, and a
+guild-guild squared matrix (Theta) for the interaction probabilities
+(i.e. interaction strength) of species within and between guilds. The
 connectance model posits that interactions of specialist species are
 subsets of those of generalist species, optimizing connectivity scores
 to recreate observed network patterns. The trait-matching model assumes
 non-random species interactions determined by trait differences,
 optimizing parameters along latent-trait axes. The matching-centrality
-model combines connectivity scores and latent-trait axes
-[@terry2020finding]. We fitted these models to our available interaction
-data and selected the model that best predicted the observed continental
+model combines connectivity scores and latent-trait axes (Terry and
+Lewis 2020). We fitted these models to our available interaction data
+and selected the model that best predicted the observed continental
 pattern of seed dispersal interactions. Using Youden’s J as a metric
-that balanced model sensitivity and specificity [@poisot2023guidelines],
-we find that SBM was the best supported model (Figure S2 A-C).
-Additional details about the model assumptions are explained in
-***Supplementary Text S1**.*
+that balanced model sensitivity and specificity (Poisot 2023), we find
+that SBM was the best supported model (Figure S2 A-C). Additional
+details about the model assumptions are explained in ***Supplementary
+Text S1**.*
 
-### Downscaling the continental metaweb to generate grid-cell level networks
+*Identifying interactions guilds*
 
-The digitally availability of primary biodiversity data on palms and
-their mammalian frugivores was imbalanced, with well covered data in
-terms of distribution ranges, followed by well covered data on species
-traits, to a limited number of interaction records. Therefore, to
-downscale our initial metaweb to include interactions between between
-every potentially co-occurring palms and mammal frugivore at every
-gridcell of the Neotropics, we use a two fold approach. First, we
-employed multinomial logistic regression models that aimed to predict
-the species level SBM model results (i.e. group affiliations) from
-species-level trait data. We justify the choice of multinomial logistic
-regression models as these can handle the prediction of non-binary
-outcomes, that is in our case, the labeling of SBM groupings per
-species. We fitted separate multinomial models for palms and mammal
-frugivores using a label backpropagation algorithm and a neural network
-engine, with 75% of the data allocated for training and the 25%
-remaining for testing. We used neural networks because they are useful
-when dealing with multicollinearity, as they can learn complex and
-non-linear relationships and interactions among predictor variables.
-This allowed us to separate the relative importance of distinct matching
-traits on SBM group affiliations. We extracted variable importance
-scores based on the combinations of the absolute values of the best fit
-model weights [@gevrey2003review]. Second, we considered as local
-pairwise species interaction probabilities as the product of the values
-from the Theta matrix from the SBM model that represent the latent
-interaction probabilities between species pairs within and between
-groups multiplied by their probability of co-occurrence (POC) in a
-gridcell. To represent species’ co-occurrence probabilities, we used the
-reciprocal distance between the centroids of species pair ranges within
-the grid-cell, divided by the sum of its range areas within the
-grid-cell. This implied that within each grid cell, species with closer
-range centroids and larger cumulative areas are more likely to co-occur
-and interact. This approach allowed us to recreate synthetic
-probabilistic plant-mammal frugivore networks for each grid-cell across
-the Neotropics, while accounting for the heterogeneity of species ranges
-within each grid.
+Among all network structural models tested, we found that the
+hyperparameters of the Stochastic Block Model (SBM) provided the best
+fit for capturing the observed binary patterns of palm and mammal
+frugivore interactions in the Neotropics. This suggests that these
+networks are highly modular and that certain groups of producers are
+more likely to interact with certain groups of consumers than others,
+and vice versa.  In this context, we define an *interaction guild* as a
+distinct group of palm and mammal species within the continental metaweb
+that exhibits similar interaction patterns. Within each guild, both
+producer and resource species perform comparable functional roles in the
+network. Within and between each guild combination of consumers and
+producers, species pairs exhibit the same interaction strength, where
+interaction strength is defined as the magnitude or intensity of the
+effect that one species has on another within an ecological network.
+Here we estimate interaction strength as the probability that a species
+pair would interact in nature.  The SBM estimates such interaction
+probabilities based on the frequency of interactions observed between
+species assigned to given number of consumer or producer guilds. The SBM
+model uses maximum likelihood to adjust the number of guilds and the
+distribution of interaction probabilities within and between guilds such
+that they best explain the observed pattern of interactions. Using SBMs
+largely reduces the complexity of dealing with interaction strengths by
+treating them as a guild-level phenomenon instead of a species-specific
+one.  
 
-### Measuring Functional Trophic Asymmetry (FTA) and Network Specialization (H2')
+*Downscaling the continental metaweb to generate grid-cell level
+networks*
 
-We computed Functional Trophic Asymmetry (FTA) from the results of the
-SBM model fit. Specifically, from the matrices representing the
-incidence of palm or mammal frugivore species in one of the SBM
-groupings. Thus, as our measure of functional richness, we calculated
-the number of species of each taxon across SBM groups per grid. Because
-we had differences in the total number of palm and mammal species across
-grids, we normalized species counts within gridcells. We then computed
-the absolute difference between trophic levels to obtain a measure of
-FTA for each combination of SBM groups. Because we had the potential for
-each palms and mammals species at each grid to become affiliated to any
-of 7 SBM groups, and to interact with any species of the opposite
-trophic level within and between groups, we obtained a total of 49
-independent FTA measures for each gridcell, one for each palm-mammal
-group combination.
+The digital availability of primary biodiversity data on palms and their
+mammalian frugivores was imbalanced, with well covered data in terms of
+distribution ranges and species traits, but a limited number of
+interaction records. Therefore, to downscale our initial metaweb to
+include interactions between every potentially co-occurring palms and
+mammal frugivore at every grid cell of the Neotropics, we use a twofold
+approach. First, we employed multinomial logistic regression models that
+aimed to predict the species level SBM model results (i.e. interaction
+guild affiliation) from species-level trait data. We justify the choice
+of multinomial logistic regression models as these can handle the
+prediction of non-binary outcomes, that is in our case, the labeling of
+interaction guilds per species. We fitted separate multinomial models
+for palms and mammal frugivores using a label backpropagation algorithm
+and a neural network engine, with 75% of the data allocated for training
+and the 25% remaining for testing. We use neural networks because they
+are useful when dealing with multicollinearity, as they can learn
+complex and non-linear relationships and interactions among multiple
+predictor variables. This allowed us to separate the relative importance
+of distinct matching traits on SBM group affiliations. We extracted
+variable importance scores based on the combinations of the absolute
+values of the best fit model weights (Gevrey, Dimopoulos, and Lek 2003).
+We considered as local pairwise species interaction probabilities as the
+product of the values from the Theta matrix from the SBM model that
+represent the latent interaction probabilities between species pairs
+within and between groups multiplied by their probability of
+co-occurrence (POC) in a grid cell. To represent species’ co-occurrence
+probabilities, we used the reciprocal distance between the centroids of
+species pair ranges within the grid-cell, divided by the sum of its
+range areas within the grid-cell. This implied that within each grid
+cell, species with closer range centroids and larger cumulative areas
+are more likely to co-occur and interact. This approach allowed us to
+recreate synthetic probabilistic plant-mammal frugivore networks for
+each grid-cell across the Neotropics, while accounting for the
+heterogeneity of species ranges within each grid.
+
+### *Estimating Functional Richness*
+
+We investigated the spatial variation in the relative distribution of
+species counts of producers and consumers across all guilds in a grid
+cell, as an interaction network-level indicator of the spatial
+distribution of producer and consumer species’ functional richness. We
+estimated functional richness (FR) from the results of the SBM model
+fit, specifically, from the matrices representing the interaction
+guilds. Thus, to measure functional richness for each taxon, we
+calculated a vector representing the number of species across all
+interaction guilds within each grid. To account for the differences in
+the total number of palm and mammal species across grids, we normalized
+this vector to the sum of palm or mammal species counts within each grid
+cell across all interaction guilds.
+
+### *Estimating Functional Trophic Asymmetry (FTA)*
+
+We quantified functional trophic asymmetry (FTA) as the absolute
+difference between the functional richness vectors across trophic
+levels. Since each palm and mammal species in every grid cell had the
+potential to be affiliated with any of the seven interaction guilds and
+to interact with any species from the opposite trophic level both within
+and between guilds, we derived one FTA measures for each grid cell, and
+for each pairwise palm-mammal guild combination
+
+### *Estimating Network Specialization (H2’)*
 
 We measured network specialization at each grid cell using the metric
 H2’. H2’ is a network-level index that describes the degree of
-specialization of interactions between species
-[@bluthgen2007specialization]. High values indicate networks that are
-more specialized, meaning that specialist species from one trophic level
+specialization of interactions between species and varies between 0 and
+1 (Blüthgen et al. 2007). High values indicate networks that are more
+specialized, meaning that specialist species from one trophic level
 interact with specialist species from the opposite trophic level. Low
 H2’ values indicate networks among generalists, meaning that there is a
 low specificity of interactions between species across trophic levels.
 Because inferred networks varied in their network size (i.e., number of
 unique interactions between palms and mammals), we rarefied the
-computation of H2’to networks of the same absolute size per gridcell,
+computation of H2’to networks of the same absolute size per grid cell,
 resampling networks to the same number of pairwise interactions (100) at
-each grid-cell 999 times [@terry2020finding]. We selected the median of
-this H2’ distribution as our gridcell level measure of network
+each grid-cell 999 times (Terry and Lewis 2020). We selected the median
+of this H2’ distribution as our grid cell level measure of network
 specialization.
 
-We assessed the deviance of ‘observed’ FTA and H2’ from null models that
-simulated stochastic community assembly processes [@dormann2009indices].
-We created these null models by constructing networks of interactions
-between a randomized set of palms and mammals for each gridcell and
-computing expected values of FTA and H2’. To do this for a given
-gridcell, we identified their biogeographic domain (from
-[@morrone2014biogeographical]) and randomly sampled 10 palm and mammal
-species, ensuring each species is selected only once. To this subsampled
-species set, we used the same procedures to calculate FTA and H2’ and
-replicated the process 999 independent times to obtain a distribution of
-expected FTA and H2’ values. Finally, we computed the deviance between
-observed and expected values with Z-scores.
+### *Assessing the influence of climate on FTA*
 
-### Assessing the influence of climate in Functional Trophic Asymmetry
+To assess whether climate has an influence on FTA, we fitted a
+Generalized Additive Model (GAM) to examine the relationships between
+FTA and four continuous bioclimatic predictors: Mean annual temperature
+(Temp), Precipitation seasonality (PS), Temperature seasonality (TS),
+and Total annual precipitation (Prec). Temperature gradients are
+primarily influenced by elevation, whereas precipitation patterns
+regulate both seasonal and yearly water availability. Collectively,
+these factors constitute the climatic drivers that shape the continent
+multitrophic biodiversity and ecosystem dynamics. The GAM approach
+allows for modelling flexible non-linear relationships between the
+predictors and the response variable using smoothed functions. We fitted
+separate splines for each of the bioclimatic predictors. In addition, to
+assess whether the strength of interaction between producer and consumer
+guilds mediate the strength of the relationship between FTA and climate,
+we included interaction strength as an interaction term in the GAM,
+allowing splines between FTA and climate to vary non-linearly depending
+on interaction strength. We assessed model fit across two data subsets:
+the first included all guilds, while the second excluded forbidden
+interactions, defined as pairwise interactions between species with
+interaction probabilities below 0.01.
 
-We fitted linear regression models to investigate the influence of
-climate to Functional Trophic Asymmetry. We used FTA z-scores as
-response variables and the four climatic predictor variables: Mean
-Annual Temperature (Temp), Total Annual Precipitation (Prec),
-Temperature Seasonality (TS), and Precipitation Seasonality (PS) as
-predictor variables. In addition, we included the identity of the SBM
-palm-mammal group combination as an interaction term. Prior to fitting
-the models, we scale-transformed the climatic variables such that they
-all share the same mean but only differ in their standard deviation.
+### *Assessing the relationship between FTA and H2’*
 
-### Assessing the influence of Functional Trophic Asymmetry in Network Specialization
-
-We fitted linear regression models to investigate the effects of
-Functional Trophic Asymmetry in Network specialization. We used the
-average (mean) and standard deviation (sd) of FTA across all gridcells
-and SBM combinations as our predictor variables. By including both as
-predictors, the model accounts for not only the overall asymmetry but
-also its distribution among SBM groupings. We used the rarefied gridcell
-records of H2’ as our response variable. To asses model significance, we
-compared the estimates of this model to a distribution of expected model
-coefficients from fitting the same linear model for each of the null
-network assembly replicates.
+We used Generalized Additive Model (GAM) to investigate the relationship
+between rarefied grid cell network level specialization (H2’) as a
+response variable and FTA (z-scores) as the main predictor. We also
+added the effect of Mean annual temperature, Total annual precipitation,
+Precipitation seasonality, and Temperature seasonality as covariate
+functions because these climate variables may influence H2’
+independently of FTA, allowing us to isolate the specific impact of FTA
+on H2’ while controlling for the indirect effects of climate on FTA.
+Here, we calculated a scalar measure of functional trophic asymmetry
+(FTA') for each grid cell by summing the FTA values across all
+interaction guilds, weighted by their respective interaction strengths.
+This approach was selected as it appropriately accounts for the uneven
+contributions of each guild to network structure, highlighting whether
+changes in network specialization are primarily driven by shifts in FTA
+within the more specialized interaction guilds.
 
 # Results
 
-## The structure of mutualistic networks between palms and their mammalian frugivores across the Neotropics
+## **Interaction guild delineation**
 
-The SBM model organized the continental set of palm and mammal species
-into a matrix sorting species into seven SBM groups and an accompanying
-matrix that quantified interaction probabilities between and within
-groups. In our model, there was a 1.74 fold increase in the likelihood
-of interactions between species within SBM groups rather than between
-SBM groups (Figure 2A). For palms, important trait variables that
-predicted SBM group affiliation were palm fruit length, maximum stem
-height, and palm growth form (*Acaulescent* or *Erect*) (Figure S3-A).
-For mammals, important trait variables to predict species group
-affiliations were mammal activity, the logarithm of the *body mass*, and
-percentage of frugivory on diet as predictor variables (Figure S3-B).
-These analysis revealed that SBM group assortments represent communities
-of palms (Figure S4) and mammal frugivores (Figure S5) with unique trait
-combinations within the high-dimensional multitrophic spectrum of
-interaction-relevant traits. Our approach to downscale a continental
-metaweb was able to generate probabilistic networks between palms and
-mammalian frugivores for 1,072 grid cells acrosss the Neotropics. Each
-network had in average nine interaction partners per species (sd =
-5.62), 27 mammals per grid cell (sd = 14.97), and 11 palms per grid cell
-(sd = 11.42).
+The theta matrix derived from the SBM (Stochastic Block Model) analysis
+(Figure 2) displays an asymmetrical pattern of association among
+consumer and producer guilds, with stronger degree of interactions
+within guild pairs relative to the strength of interactions between
+guild pairs. Notably, palm guild 5 is strongly associated with frugivore
+guilds 4, 5, and 6, while palm guild 3 is closely linked with frugivore
+guilds 2 and 3. Conversely, palm guilds 1 and 7 show weak or minimal
+interactions with most frugivore guilds, whereas palm guild 5 engages
+more broadly across multiple frugivore guilds.
 
-## Differences in trait-climate relationships across trophic levels lead to Functional Trophic Asymmetry
+For palms, growth form emerged as the primary factor influencing guild
+associations (Figure S1). Erect palms were exclusively present in guilds
+2, 3, and 5. The guild structure also reflected variation in palm fruit
+sizes, with smaller-fruited palms found in guilds 2 and 3 (Figure S6).
+Among mammals, activity patterns significantly determined guild
+affiliations (Figure S5): diurnal mammals were prevalent in guilds 1 and
+4, while nocturnal species dominated guilds 3, 6, and 7. Additionally,
+mammals with the highest proportion of fruit in their diets were
+concentrated in guild 1. Large-bodied mammals were associated with
+guilds 5 and 6, whereas smaller-bodied mammals were present in guild 3,
+with medium-sized mammals distributed across the remaining guilds
+(Figure S7).
 
-FTA z-scores (Figure 2B) indicate that in average FTA was less than the
-FTA expected in a null model. Out of the 49 SBM group combinations,
-those with less than expected asymmetries are generally between palms in
-groups 1, 2, and 5 and mammals in groups 6 and 3. Conversely,
-combinations with significantly greater than expected asymmetries are
-generally found between palms in SBM groups 6 and 4 and mammals in SBM
-groups 1, 2, and 5. FTA peaks in tropical and mountainous regions while
-being lower in more temperate areas of the Neotropics, and remains
-stable throughout tropical and humid regions (Figure 2A). The results of
-our linear model shows significant differences in FTA among SBM groups.
-In addition, it shows a relationship between the spatial variation of
-climate and FTA. However, the significance and direction of effects vary
-as a function of the SBM group combinations (Figure 2B, Table 1). While
-the overall fixed model estimates do not show significant effects of
-climatic variation in FTA across all SBM group combinations \[Temp (Mean
-annual temperature) ( 𝞫 =0.0051, p=0.859), Prec (Total annual
-precipitation) ( 𝞫 =−0.0364 p=0.384), TS (Temperature Seasonality) (𝞫
-=−0.0180 p=0.746), and PS (Precipitation Seasonality) (𝞫 =−0.0507
-p=0.250)\]; for specific group combinations, FTA is significantly
-predicted by climate, particularly by changes in Precipitation
-Seasonality (Figure S6). Approximately 59% of the variability in the FTA
-z-score is explained by the linear model with our climate predictors as
-fixed effects and SBM group identity as interaction terms (adjusted
-R-squared = 0.59).
+::: column-margin
+![**Figure 2:** Heatmap depicting the probability of interaction between
+palm and mammal interaction guilds defined as blocks by the Stochastic
+Block Model (SBM). The intensity of red shading correlates with the
+strength of these interactions, where darker shades signify higher
+probabilities of interaction between species within or between
+interaction guilds (SBM blocks), where the probability was inferred
+using the Stochastic Block Model’s estimated interaction parameters
+(theta Matrix) derived from fitting the model to observed binary
+(presence = 1, absence = 0) interaction data compiled from scientific
+literature.](Main_figures/Picture4.jpg){fig-align="center"}
+:::
 
-On one hand, group combinations exhibiting a positive relationship
-between FTA and precipitation seasonality are characterized by a
-relatively stable functional richness of mammals across gradients of
-precipitation seasonality, while the functional richness of palms
-increases under these conditions (Figures S6, S7). A significant portion
-of this pattern can be attributed to turnover within the palm community
-of SBM group 6, which predominantly consists of small to medium-sized
-drupes or berries. These palms, which belong to genera such as
-*Acrocomia*, *Allagoptera*, and *Astrocaryum* are typically of tropical
-origin and display diverse growth forms, including both erect and
-acaulescent. Conversely, group combinations showing a negative
-association between FTA and precipitation seasonality are primarily
-driven by patterns in the palm community of SBM group 5 (Figures S6,
-S7). In this scenario, while the functional richness of mammals remains
-stable, the functional richness of these palms, generally characterized
-by species with erect growth forms and large fruits, increases in
-regions with low precipitation seasonality.
+## Assessing the influence of climate on functional richness
 
-## Functional Trophic Asymmetry increases Network Specialization
+The GAM results at the assemblage-wide scale show minimal responses in
+the functional richness of both palms and mammals to climatic variation
+when considered independently of their guild associations (Table S1a,b).
+For palms, there is no substantial response to temperature (*F* = 3.00,
+*P* = 0.00) or precipitation (*F* = 1.19, *P* = 0.23), nor to
+temperature seasonality (*F* = -0.27, *P* = 0.79) and precipitation
+seasonality (*F* = 0.68, *P* = 0.50). Similarly, mammals display mixed
+responses to environmental factors, with mean annual temperature showing
+a strong effect (*F* = 10.60, *P* = 0.00), while precipitation (F =
+0.00, P = 1.00), temperature seasonality (*F* = 0.52, *P* = 0.60), and
+precipitation seasonality (*F* = 1.67, *P* = 0.10) show no significant
+effect at the assemblage level.
 
-We found overall, palm-mammalian frugivore networks had low
-specialization, H2' ranged from 0.12 to 0.25. In addition, there was a
-significant relationship between aggregated gridcell records of
-Functional Trophic Asymmetry and H2' metric. Specifically, FTA z-scores
-increased H2’ by 3.28 units per mean unit increase across all SBM
-groups. Additionally, the standard deviation of FTA z-scores decreased
-H2’ by 1.01 units per unit increase across all SBM groups (SD FTA).
-While this linear model explained only around 8.7% of the total spatial
-variability in H2’ (adjusted R-squared = 0.087), the results of our
-simulations show that the intercept and slope estimates are
-statistically significant from null assembly models (Figure S7).
+When incorporating guild into our analyses, generalized additive models
+(GAMs) reveal marked differences between trophic levels, particularly in
+palms' responses to precipitation seasonality and mammals' responses to
+mean annual temperature (Figure S10). For palms, precipitation
+seasonality (PS) exhibits significant effects within guilds 5 and 6 (*F*
+= 5.62, *P* = 0.00 and *F* = 8.37, *P* = 0.01, respectively), suggesting
+that these guilds are especially sensitive to seasonal precipitation
+variations (Figure S8). In contrast, mammals show no significant
+guild-specific response to precipitation seasonality; instead, their
+most pronounced response is to temperature, specifically among species
+within guild 4 (F = 11.21, *P* = 0.00) (Figure S9). Notably, guild 3 for
+mammals and guilds 5 and 6 for palms represent the dominant guilds
+across the climatic gradient.
 
-# Discussion
+::: column-margin
+![**Figure 3:** Functional richness of mammals and palms in relation to
+environmental gradients of mean annual temperature and precipitation
+seasonality, categorized by interaction guilds (X1 to X7). Panels on the
+left illustrate functional richness trends for mammals, showing varied
+responses across temperature and precipitation gradients for each
+interaction guild. Panels on the right show corresponding trends for
+palms. Each line represents a different interaction guild, with colors
+indicating distinct guilds as shown in the legend. Points represent
+individual observations, while shaded areas around lines indicate
+confidence intervals, capturing the variability of functional richness
+across environmental
+conditions.](Main_figures/00_Figure3.png.jpg){fig-align="center"}
+:::
 
-Our approach unveils novel insights into the assembly of mutualistic
-networks by making use of digitally available primary biodiversity data
-at broad scales. By identifying species of palms and mammals with
-similar interaction patterns, we can offer a more nuanced understanding
-of network assembly dynamics within these multitrophic communities. The
-observed Functional Trophic Asymmetry (FTA) across different climatic
-regions of the Neotropics underscores the importance of contemporary
-climate change in shaping interaction niches across species'
-distributional rangespation in precipitation seasonality emerging as a
-key predictor of FTA in certain SBM palm and mammal group combinations,
-where higher FTA increase overall network specialization.
+## Assessing the influence of climate on FTA
 
-The delineation of interactions into distinct groups indicates that, at
-a continental scale, the network of seed dispersal interactions is
-highly compartmentalized. This finding aligns with previous work
-reporting significant modularity in palm seed dispersal interactions
-across the Neotropical continent. @munoz2019synthesis In our study, we
-extend this understanding by identifying palm growth form and mammal
-foraging activity periods as key palm and animal traits driving this
-broad scale modularity through changes in functional richness. While our
-analysis revealed a higher probability of pairwise species interactions
-occurring within Stochastic Block Model (SBM) groups, interactions
-between SBM groups are not at all improbable. The observed distribution
-of interaction probabilities within and between SBM groups highlights
-multitrophic assemblages being central to the entire metaweb, notably
-the palm and mammal species in SBM groups 5 and 6, which are those with
-extensive distributional ranges and more generalist diets. Conversely,
-it also identifies peripheral groups, such as species in SBM groups 1-3,
-which exhibit narrower interaction niches. These peripheral species
-assemblages which may correspond to those species with restricted ranges
-or specialized diets. Indeed, SBM groups 5-6 include larger, nocturnal
-mammals that feed on palms with varying fruit sizes and growth forms,
-ranging from erect to acaulescent, whereas SBM groups 1-3 predominantly
-consist of smaller, diurnal mammals that consume small fruits from erect
-palms.
+Interaction strength was identified as the principal non-linear driver
+of FTA variation. Our analysis revealed a bi-modal distribution of FTA:
+guilds with either high interaction strength (\> 0.3) or no interaction
+strength ( \< 0.01) exhibited high FTA values, whereas guilds with
+moderate interaction strength (0.01 - 0.3) showed low FTA values.
 
-Communities of similarly interacting species obtained from SBM models
-have been shown to reflect ecological factors, such as the
-spatio-temporal segregation of species assemblages and the
-differentiation of interaction niches @durand2023trait . Our linear
-model highlights Precipitation Seasonality as a key factor influencing
-Functional Trophic Asymmetry (FTA) across SBM groupings. This suggests
-that spatial variation in interaction niches emerges from the
-differences in the strength of environmental selection between trophic
-levels. Such uneven pressures result in multitrophic assemblages where
-not all trait combinations align optimally with the global preferences
-of their co-occurring interaction partners, thus contributing to promote
-structural diversity in seed dispersal networks across Neotropical
-sites. For example, mammalian frugivores, which can exhibit a broad
-tolerance for varying levels of precipitation seasonality, may
-predominantly consume small-fruited palms in regions with high
-precipitation seasonality. This is likely because palms with smaller
-fruits are better adapted to thrive under conditions of variable water
-availability. Consequently, this ecological scenario is expected to
-result in increased FTA, driven by the restricted functional richness of
-available resources for consumers. Similarly, palms with larger fruit
-sizes and predominantly erect growth forms consumed by large sized
-frugivores might reflect adaptations to attract high quality animal seed
-disperses in environments where consistent water availability promotes
-higher habitat complexity and plant competition. Consequently, this
-ecological scenario is expected to result in increased FTA, driven by
-the restricted functional richness of available consumers relative to
-producers. In both cases, FTA imposes limits over trait matching between
-partners of distinct trophic levels and the partitioning of interaction
-niches within species of the same trophic level.
+When incorporating all interaction guilds, the Generalized Additive
+Modeling (GAM) analysis reveals a significant effect of mean annual
+temperature on functional trophic asymmetry (FTA), with warmer regions
+showing elevated FTA values (*F* = 5.97, *P* = 0.01). In this model,
+other climate variables, total precipitation, precipitation seasonality,
+and temperature seasonality—do not significantly influence FTA. However,
+when examining the same GAM model, but excluding forbidden interactions
+(i.e. interaction strength \< 0.01), both mean annual temperature (*F* =
+4.72, *P* = 0.03) and precipitation seasonality (*F* = 3.95*, P* \<
+0.01) emerge as significant predictors. This refined model suggests that
+regions with high mean annual temperatures and high precipitation
+seasonality exhibit the highest FTA values. In contrast, regions with
+either warm temperatures and low precipitation seasonality or cold
+temperatures and high precipitation seasonality are associated with
+moderate FTA, while colder regions with low precipitation seasonality
+show the lowest FTA values. Notably, temperature seasonality (*F* =
+0.01, *P* = 0.91) and total annual precipitation (*F* = 1.68, *P* =
+0.12) remain non-significant in this model.
 
-Having a low degree of specialization in palm-mammal frugivore seed
-dispersal networks is not entirely unexpected given the historical
-ecological shifts that these species have experienced in the Neotropics.
-Unlike other major tropical regions, such as the Afrotropics and
-South-East Asia, the Neotropics had significant post-Pleistocene
-extinctions, which heavily altered mammalian communities. These
-extinctions, which impacted disproportionately to mammal megafauna,
-likely exacerbate competition and extinction rates among their
-large-fruited palm partners, particularly in those regions with high
-mammal diversity and endemism. @webb2006great; @whiteman2015into
-Concurrently, the radiation of small-fruited palm taxa
-@onstein2014diversification; @onstein2017frugivory further contributed
-to the decoupling of trait diversity between palms and mammals and the
-re-structuring of seed dispersal networks across trophic levels in the
-Neotropics. Without this trait decoupling due the co-evolutionary
-dynamics between palms and mammal frugivores may have remained
-unaltered, fostering otherwise more specialized networks.
+In analyzing climate effects considering the variation of interaction
+strength between consumer and producer guilds, precipitation seasonality
+shows a marginally significant effect (*F* = 0.13, *P* = 0.05). After
+filtering out forbidden interactions, however, the influence of
+interaction strength on the effect of precipitation seasonality becomes
+non-significant (*F* = 0.00, *P* = 0.09), while the interaction with
+total annual precipitation gains statistical significance (*F* = 0.00,
+*P* = 0.04), albeit its overall effect remains low. The model that does
+not filter by interaction strength explained a lower proportion of
+deviance (6.56%) compared to model excluding forbidden interactions
+which accounted for 14.2% of the deviance in FTA (Table 1).  
 
-The positive estimate for mean FTA suggests a strong positive influence
-of FTA on H2’, thus promoting network specialization. In contrast, the
-negative estimate for FTA standard deviation (SD) indicates that a large
-variation in FTA within SBM group combinations significantly reduces
-H2', implying more generalist interactions. This suggest, that while
-overall higher FTA promotes network specialization, an inconsistent FTA
-across SBM groups can disrupt this pattern, making network structure
-less predictable from multitrophic trait patterns. Previous research in
-insular regions where trophic communities are often subject to
-asymmetric filtering strengths have shown that the specialization of
-mutualistic networks can indeed be resilient to shifts in the degree of
-ecological filters between trophic levels. Particularly, if the networks
-are well supported by generalist species [@schleuning2012specialization
-; @schleuning2016ecological]. It is therefore critical to consider
-changes in the underlying network structure when evaluating potential
-effects that climate-driven species or species trait losses have in
-ecosystem function [@acevedo2020structure; @schleuning2020trait;
-@schleuning2023animal, @classen2020specialization]
+::: column-margin
+![**Figure 4:** Functional trophic asymmetry (FTA) and network
+specialization (H2’) in relation to environmental gradients of mean
+annual temperature and precipitation seasonality. Panels on the left
+depict the relationship between FTA and environmental gradients, where
+lines indicate different levels of interaction strength. Higher
+interaction strength (red line) corresponds with increased FTA values.
+Panels on the right display network specialization (H2’) across the same
+environmental gradients, with different levels of FTA represented by
+color. Shaded regions indicate confidence intervals, illustrating the
+variability across environmental conditions. Arrows at the bottom of
+each set of panels represent the direction of the environmental gradient
+from low to high
+values.](Main_figures/00_Figure4.png.jpg){fig-align="center"}
+:::
 
-We validated the statistic significance of the model parameters through
-null simulations of network assembly,. However, it is noteworthy that
-our null models are limited to presence/absence permutations. Therefore,
-the potential influence of varying species relative abundances across
-sites was not considered in this study. It is well established that
-population-density dependent effects can modify interaction
-probabilities from trait matching and range co-occurrences \[
-@pena2023abundance, @donoso2017complementary, @mcfadden2022global\]
-Future studies should aim to incorporate species abundance estimates
-when defining interaction probabilities. However, despite ongoing
-efforts, such data is not readily available for multiple species at
-different trophic levels, and at broad spatial scales. Our results help
-elucidate mechanisms that contribute towards a broader theory of
-multitrophic community assembly. However, given the current limitation
-in obtaining reliable species abundance data, we advise caution when
-utilizing our data pipelines for making finer-scale spatial predictions
-of network assembly and interaction diversity. Similarly, the use
-biogeographic domains to delineate the species pools in the construction
-of our null models respects ecological theory and considers both
-historical and regional species pools \[@mcfadden2022global,
-@carstensen2013introducing, @cornell2014species\]. However, one critical
-assumption of this approach is that species within each biogeographic
-dominion are all equally likely to colonize a given community
-\[@lessard2012inferring\] While this assumption may simplify the
-computational complexity of our algorithms, future work could penalize
-dispersal distances with landscape level variables such as the slope
-terrain \[@preau2022dispersal; @schlagel2020movement\]. Finally, the
-clustering of interactions captured by the SBM may be also capturing
-reveal relatively unexplored drivers of interaction assembly, such as
-phylogenetic niche conservatism \[@ackerly2003community;
-@wiens2005niche; @pyron2015phylogenetic\], where closely related species
-retain similar ecological traits over evolutionary time, and/or the
-widespread extinctions of large mammals frugivores and the rapid trait
-speciation of small fruited palms [@donoso2020downsizing;
-@lim2020frugivore; @onstein2017frugivory] . Partitioning these aspects
-and their relative influences in delineating SBM group assignments can
-be future research avenues to better understand the underlying
-mechanisms behind mutualistic interaction patterns in space and time.
+## Assessing the relationship between FTA’ and H2’
 
-Unraveling the complexity of network assembly processes across broad
-spatial scales requires continous development and refining of
-statistical workflows and biodiversity data pipelines that integrate
-digitally available data from diverse sources [@kissling2012towards;
-@thuiller2024navigating] Continued field collection, their open-release,
-and data standardization is crucial if we want to expand our capacity to
-training models capable of predicting ecological network structures at a
-global scale with a high degree of spatial and/or temporal
-resolution[@poisot2016describe; @poisot2021global]. While many of these
-modelling approaches are in early development, their success hinges on
-the availability and reliability of foundational data. We have
-demonstrated that with sparse data across large scales, novel models can
-indeed be developed. Filling global data gaps and leveling data
-completeness across species ranges, traits, and interactions can
-certainly enhance predictive accuracy. While our case study has a
-history of digitally available natural history data on both palms and
-mammal frugivores, such comprehensive datasets are not available for
-many other tropical clades. We thus advocate for increased awareness,
-action, and funding for global biodiversity programs that collect and
-digitize natural records, thus enabling the continous development of
-large-scale spatially explicit predictive models that inform about
-mechanisms of network assembly, and their relationship to climate and
-ecosystem function.
+We found that palm-mammalian frugivore networks have levels of trophic
+specialization (H2’) ranging from 0.12 to 0.25, where 0 means species
+have no preference or specialization in their interaction partners and 1
+represents networks where each species interacts only with a specific
+subset of interaction partners.  The Generalized Additive Model (GAM)
+results indicate that variation in H2’ relates most strongly to
+variation in FTA’ (*F* = 24.36; *P* \< 0.001). Mean annual temperature
+also exerts a significant effect (*F* = 2.12, *P* = 0.03), as does
+precipitation seasonality PS (*F* = 2.29, *P* = 0.02) Thus, the model
+suggests higher specialization in warm and hot regions with high
+precipitation seasonality and even higher in grid cells where
+multitrophic communities exhibit high functional trophic asymmetry
+across all interaction guilds (Figure 4). In contrast, H2’ drops sharply
+for cold and dry regions, and variation in H2’ does not relate to
+variation in temperature seasonality or total annual precipitation (
+both *P* \> 0.05). The deviance explained by this model was 17.6%.
+ (Table 2)
 
-# Data Accessibility Statement
-
-Data is available at...
+::: column-margin
+![**Figure 5:** Spatial distribution of environmental and ecological
+variables across the Neotropics. Panels (A) and (B) show the
+geographical variation in mean annual temperature and precipitation
+seasonality, respectively, with warmer colors indicating higher values.
+Panels (C) and (D) depict the spatial patterns of functional trophic
+asymmetry (FTA) and network specialization (H2'), where higher values
+are also represented by warmer colors. FTA (Panel C) reflects variation
+in functional trophic asymmetry across regions, with higher values
+concentrated in areas of higher temperature and seasonality. Network
+specialization (Panel D) indicates the degree of exclusive interactions
+within ecological networks. Color scales for each map are shown in
+adjacent legends.](Main_figures/00_Figure5.png.jpg){fig-align="center"}
+:::
 
 # References
 
 # Tables
 
-Table 1: Linear regression analysis of the relationship between
-Bioclimatic Predictors (Mean Annual Temperature, Total Annual
-Precipitation, Precipitation Seasonality, Temperature Seasonality) and
-Functional Trophic Asymmetry within SBM groups (p1m1 - p7m7).
-Statistically significant effects (p\<0.05) are marked with (\*). Beta
-correspond to the variable effect coefficient in the model and SE
-correspond to the standard error.
+```{r, echo = FALSE, include=FALSE, warning=FALSE, message=TRUE}
+library(tidyverse)
+library(mgcv)
+
+```
+
+Table 1a: Summary of parametric and smooth term coefficients for models
+predicting FTA responses to climate for all guilds. The parametric
+coefficients include estimates, standard errors, t-values, and p-values
+for the intercept. Smooth terms are presented for each predictor and its
+interactions, showing effective degrees of freedom (edf), reference
+degrees of freedom (Ref.df), F-statistics, and p-values under both
+conditions. Significant p-values highlight predictors or interactions
+with a statistically significant effect.
 
 ```{r, echo = FALSE, warning=FALSE, message=TRUE}
 
 #| title
 
-library(gtsummary)
+model_gam <- readRDS('model_gam_str.RDS')
+sjPlot::tab_model(model_gam, show.se = TRUE, show.p = TRUE,   digits = 2)
+```
 
+Table 1b: Summary of parametric and smooth term coefficients for models
+predicting FTA responses to climate for guilds with interaction
+probabilities \> 0.01. The parametric coefficients include estimates,
+standard errors, t-values, and p-values for the intercept. Smooth terms
+are presented for each predictor and its interactions, showing effective
+degrees of freedom (edf), reference degrees of freedom (Ref.df),
+F-statistics, and p-values under both conditions. Significant p-values
+highlight predictors or interactions with a statistically significant
+effect.
 
-
-mymod <- readRDS("C:/Users/gabri/Documents/PhD/00_Chapter_palms_mammal_interactions/R-analisis/00_Data/04_models/lm_asym_all.RDS")
-
-gtsummary::tbl_regression(mymod, 
-                          label = list('lab' = 'SBM group', 
-                                       'scale(Temp)' = 'Mean Annual Temperature', 
-                                       'scale(Prec)' = 'Total Annual Precipitation','scale(TS)' = 'Temperature Seasonality', 'scale(PS)' = 'Precipitation Seasonality')) |>
-  bold_p(t = 0.05)|>
-  bold_labels() |>
-  italicize_levels() |> 
-  gtsummary::add_significance_stars()
+```{r}
+model_gam <- readRDS('model_gam_str_nfbi.RDS')
+sjPlot::tab_model(model_gam, show.se = TRUE, show.p = TRUE,   digits = 2)
 
 ```
 
-Table 2: Linear regression analysis of the relationship between
-Functional Trophic Asymmetry and Network Specialization. Statistically
-significant effects (p\<0.05) are marked with (\*). Beta correspond to
-the variable effect coefficient in the model and SE correspond to the
-standard error.
+Table 2: Summary of parametric and smooth term coefficients for the
+model predicting H2’ responses based on environmental and FTA variables.
+The parametric coefficients include the estimate, standard error,
+t-value, and p-value for the intercept. Smooth terms are shown for each
+predictor (sum_fta, Temp, PS, TS, and Prec), providing the effective
+degrees of freedom (edf), reference degrees of freedom (Ref.df),
+F-statistics, and p-values, which indicate the statistical significance
+of each smooth term. Significant p-values suggest predictors with a
+meaningful contribution to the model.
 
 ```{r, echo = FALSE , warning=FALSE}
-mymod <- readRDS("C:/Users/gabri/Documents/PhD/00_Chapter_palms_mammal_interactions/R-analisis/00_Data/04_models/obs_model1.RDS")
 
-gtsummary::tbl_regression(mymod, label = list('mean_fta' = "FTA (mean)",
-                                              'sd_fta' = 'FTA (sd)')) |>
-  bold_p(t = 0.05)|>
-  bold_labels() |>
-  italicize_levels() |>
-  add_significance_stars() |>
-  add_global_p() 
+model_gam <- readRDS('model_gam_h2.RDS')
+sjPlot::tab_model(model_gam, show.se = TRUE, show.p = TRUE,   digits = 2)
 
 
 ```
 
-# Figure legends and embedded figures
+# Supplementary Figures
 
-## Figure 1
+::: panel-tabset
+## Supplementary Figure 1
 
-![This conceptual model illustrates the dynamic relationship between
-functional diversity metrics—specifically Functional Richness (FR) and
-Functional Trait Asymmetry (FTA)—and environmental gradients within
-ecological networks. The left panel of **Figure A** visualizes the
-variation in FR for producers (depicted in green) and consumers
-(depicted in orange) along an environmental gradient. As the
-environmental gradient intensifies (e.g., through changes in
-temperature, precipitation, or habitat fragmentation), FR for both
-producers and consumers generally declines. However, this decline can
-occur at different rates, leading to two scenarios: (1) **Differential
-Decline in FR**: If consumer FR declines more sharply than producer FR,
-a substantial increase in Functional Trait Asymmetry (FTA) occurs. (2)
-**Parallel Decline in FR**: Alternatively, if both producer and consumer
-FRs decline at a similar rate, FTA remains relatively constant along the
-gradient. This scenario indicates a balanced impact of environmental
-changes across trophic levels, preserving the relative functional
-relationship between producers and consumers. **Figure B** shifts focus
-to the implications of changing FTA on network specialization—a measure
-of how distinct or generalized interactions are between producers and
-consumers within ecological networks. **Higher Specialization**: This
-scenario, shown on the left side of the gradient, involves more distinct
-producer-consumer interactions, where specific consumer species interact
-with particular producer species. This high specialization often
-correlates with low FTA, where the functional traits between interacting
-species are closely aligned. **Lower Specialization**: As environmental
-stress increases, leading to a higher FTA, the network may shift towards
-lower specialization. In this state, interactions become more
-generalized, with consumers utilizing a broader range of producers due
-to the loss of specific functional
-traits.](Main_figures/00_Figure1.png){fig-align="center"}
+![Metaweb of
+interactions](sup_figures/S1_metaweb.png){fig-align="center"
+width="542"}
 
-## Figure 2
+## Supplementary Figure 2
 
-![**(A)** Heatmap depicting the interaction probability among various
-multitrophic communities across different SBM (Stochastic block model)
-groups. The intensity of red shading correlates with the strength of
-these interactions, where darker shades signify higher probabilities of
-interaction between species within or between SBM groups. **(B)** The
-left panels present geographical maps illustrating the distribution of
-FR for both mammals and palms, identifying regions with distinct levels
-of functional diversity for a given multitrophic combination of species
-at one SBM group pair. The right panels illustrate the significant
-relationship observed between FTA and precipitation
-seasonality.](Main_figures/00_network_fr.png){fig-align="center"}
+![Data
+imbalance](sup_figures/species_count_plot_AAS_style.png){fig-align="center"
+width="545"}
 
-## Figure 3
+## Supplementary Figure 3
 
-![Spatial distribution of **(A)** FTA z-score (mean) and **(B)** H2'
-network specialization index across the Neotropics. Panel A depicts the
-geographic variation in the mean z-scores of the Functional Trophic
-Asymmetry (FTA). Areas with higher z-scores indicate greater asymmetry
-in the richness of interaction relevant traits between trophic levels,
-whereas lower scores suggest more balanced trait distributions. Panel B
-presents the spatial distribution the degree of species specialization
-of interactions within ecological networks. This panel reveals
-significant latitudinal gradients, particularly marked in the Andes and
-the Southern
-Cone.](Main_figures/00_network_maps.tif.png){fig-align="center"}
+![Latent network model
+fit](sup_figures/Sup_modelsfit.jpg){fig-align="center" width="545"}
 
+## Supplementary Figure 4
+
+![Data imbalance](sup_figures/palm_var_imp.jpg){fig-align="center"
+width="545"}
+
+## Supplementary Figure 5
+
+![Data imbalance](sup_figures/mammal_var_imp.jpg){fig-align="center"
+width="545"}
+
+## Supplementary Figure 6
+
+![Data imbalance](sup_figures/palm_trait_sbm.jpg){fig-align="center"
+width="545"}
+
+## Supplementary Figure 7
+
+![Data imbalance](sup_figures/mammal_trait_sbm.jpg){fig-align="center"
+width="545"}
+
+## Supplementary Figure 8
+
+![Data imbalance](sup_figures/palm_FR_detail.jpg){fig-align="center"
+width="545"}
+
+## Supplementary Figure 9
+
+![Data imbalance](sup_figures/mammal_FR_detail.jpg){fig-align="center"
+width="545"}
+
+## Supplementary Figure 10
+
+![Data
+imbalance](sup_figures/fr_model_predictions.jpg){fig-align="center"
+width="545"}
+
+## Supplementary Figure 11
+
+![Data imbalance](sup_figures/sup_SBM_taxonomy.jpg){fig-align="center"
+width="545"}
+
+## Supplementary Figure 12
+
+![Data imbalance](sup_figures/fta_surface_both.jpg){fig-align="center"
+width="545"}
+:::
+
+# Suplementary Tables
+
+### Supplementary Table 1a:
+
+Summary of parametric and smooth term coefficients for models predicting
+ecological responses in the Functional Richness of interaction relevant
+traits of Palms. The parametric coefficients include estimates, standard
+errors, t-values, and p-values for each predictor (Intercept, Mean
+annual temperature (Temp), Total annual precipitation (Prec),
+Temperature seasonality (TS), and Precipitation seasonality (PS) ).
+Smooth terms are shown for each predictor in combination with ecological
+guilds (Guild_X1 through Guild_X7), providing the effective degrees of
+freedom (edf), reference degrees of freedom (Ref.df), F-statistics, and
+p-values for each interaction. Significant p-values are highlighted,
+indicating where predictor-guild interactions have a statistically
+significant effect on the response variable.
+
+```{r}
+model_gam <- readRDS('model_gam_fr_palm.RDS')
+sjPlot::tab_model(model_gam, show.se = TRUE, show.p = TRUE,   digits = 2)
+
+
+```
+
+### Supplementary Table 1b:
+
+Summary of parametric and smooth term coefficients for models predicting
+ecological responses in the Functional Richness of interaction relevant
+traits of frugivore Mammals. The parametric coefficients include
+estimates, standard errors, t-values, and p-values for each predictor
+(Intercept, Mean annual temperature (Temp), Total annual precipitation
+(Prec), Temperature seasonality (TS), and Precipitation seasonality (PS)
+). Smooth terms are shown for each predictor in combination with
+ecological guilds (Guild_X1 through Guild_X7), providing the effective
+degrees of freedom (edf), reference degrees of freedom (Ref.df),
+F-statistics, and p-values for each interaction. Significant p-values
+are highlighted, indicating where predictor-guild interactions have a
+statistically significant effect on the response variable.
+
+```{r}
+model_gam <- readRDS('model_gam_fr_mammal.RDS')
+sjPlot::tab_model(model_gam, show.se = TRUE, show.p = TRUE,   digits = 2)
+```
