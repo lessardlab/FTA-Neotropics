@@ -41,14 +41,28 @@
 \setlength{\emergencystretch}{3em} % prevent overfull lines
 \setcounter{secnumdepth}{5}
 % Make \paragraph and \subparagraph free-standing
+\makeatletter
 \ifx\paragraph\undefined\else
   \let\oldparagraph\paragraph
-  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
 \fi
 \ifx\subparagraph\undefined\else
   \let\oldsubparagraph\subparagraph
-  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
+\makeatother
 
 
 \providecommand{\tightlist}{%
@@ -64,15 +78,17 @@
 \makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
-\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
-\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
-\makeatother
-% Scale images if necessary, so that they will not overflow the page
-% margins by default, and it is still possible to overwrite the defaults
-% using explicit options in \includegraphics[width, height, ...]{}
-\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
 % Set default figure placement to htbp
-\makeatletter
 \def\fps@figure{htbp}
 \makeatother
 % definitions for citeproc citations
@@ -159,9 +175,7 @@
 \@ifpackageloaded{sidenotes}{}{\usepackage{sidenotes}}
 \@ifpackageloaded{marginnote}{}{\usepackage{marginnote}}
 \makeatother
-\ifLuaTeX
-  \usepackage{selnolig}  % disable illegal ligatures
-\fi
+
 \usepackage{bookmark}
 
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
@@ -177,6 +191,7 @@ specialization, Seed dispersal},
   citecolor={Blue},
   urlcolor={Blue},
   pdfcreator={LaTeX via pandoc}}
+
 
 
 \draftfalse
@@ -257,6 +272,7 @@ change could lead to more specialized mutualistic networks which are
 more prone to collapse when facing further threats and local
 extinctions.
 \end{abstract}
+
 
 
 
@@ -388,7 +404,7 @@ to network specialization.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Main_figures/00_Figure1.png}
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{Main_figures/00_Figure1.png}}
 
 }
 
@@ -738,7 +754,7 @@ with medium-sized mammals distributed across the remaining guilds
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Main_figures/Picture4.jpg}
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{Main_figures/Picture4.jpg}}
 
 }
 
@@ -792,7 +808,7 @@ dominant guilds across the climatic gradient.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Main_figures/00_Figure3.png.jpg}
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{Main_figures/00_Figure3.png.jpg}}
 
 }
 
@@ -859,7 +875,7 @@ deviance in FTA (Table 1). ~
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Main_figures/00_Figure4.png.jpg}
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{Main_figures/00_Figure4.png.jpg}}
 
 }
 
@@ -905,7 +921,7 @@ explained by this model was 17.6\%. ~(Table 2)
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Main_figures/00_Figure5.png.jpg}
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{Main_figures/00_Figure5.png.jpg}}
 
 }
 
@@ -940,17 +956,17 @@ conditions. Significant p-values highlight predictors or interactions
 with a statistically significant effect.
 
 \begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
 \toprule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
 ~ &
-\multicolumn{4}{>{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
+\multicolumn{4}{>{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
 Dependent variable} \\
 Predictors & Estimates & std. Error & CI & p \\
 (Intercept) & 0.21 & 0.00 & 0.21~--~0.21 & \textbf{\textless0.001} \\
@@ -970,15 +986,15 @@ str)\strut
 \end{minipage} & & & & 0.289 \\
 Smooth term (int str) & & & & \textbf{\textless0.001} \\
 Observations &
-\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
 53406} \\
 R\textsuperscript{2} &
-\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
 0.200} \\
 \end{longtable}
 
 \textsubscript{Source:
-\href{https://lessardlab.github.io/FTA-Neotropics/index-preview.html}{Article
+\href{https://lessardlab.github.io/FTA-Neotropics/index.qmd.html}{Article
 Notebook}}
 
 Table 1b: Summary of parametric and smooth term coefficients for models
@@ -992,17 +1008,17 @@ p-values highlight predictors or interactions with a statistically
 significant effect.
 
 \begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
 \toprule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
 ~ &
-\multicolumn{4}{>{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
+\multicolumn{4}{>{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
 Dependent variable} \\
 Predictors & Estimates & std. Error & CI & p \\
 (Intercept) & 0.25 & 0.00 & 0.24~--~0.25 & \textbf{\textless0.001} \\
@@ -1022,15 +1038,15 @@ str)\strut
 \end{minipage} & & & & \textbf{0.042} \\
 Smooth term (int str) & & & & \textbf{\textless0.001} \\
 Observations &
-\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
 33534} \\
 R\textsuperscript{2} &
-\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
 0.206} \\
 \end{longtable}
 
 \textsubscript{Source:
-\href{https://lessardlab.github.io/FTA-Neotropics/index-preview.html}{Article
+\href{https://lessardlab.github.io/FTA-Neotropics/index.qmd.html}{Article
 Notebook}}
 
 Table 2: Summary of parametric and smooth term coefficients for the
@@ -1064,7 +1080,7 @@ R\textsuperscript{2} & \multicolumn{4}{l@{}}{%
 \end{longtable}
 
 \textsubscript{Source:
-\href{https://lessardlab.github.io/FTA-Neotropics/index-preview.html}{Article
+\href{https://lessardlab.github.io/FTA-Neotropics/index.qmd.html}{Article
 Notebook}}
 
 \section{Supplementary Figures}\label{supplementary-figures}
@@ -1073,7 +1089,7 @@ Notebook}}
 
 \begin{figure}[H]
 
-{\centering \includegraphics[width=5.64583in,height=\textheight]{sup_figures/S1_metaweb.png}
+{\centering \includegraphics[width=5.64583in,height=\textheight,keepaspectratio]{sup_figures/S1_metaweb.png}
 
 }
 
@@ -1085,7 +1101,7 @@ Notebook}}
 
 \begin{figure}[H]
 
-{\centering \includegraphics[width=5.67708in,height=\textheight]{sup_figures/species_count_plot_AAS_style.png}
+{\centering \includegraphics[width=5.67708in,height=\textheight,keepaspectratio]{sup_figures/species_count_plot_AAS_style.png}
 
 }
 
@@ -1097,7 +1113,7 @@ Notebook}}
 
 \begin{figure}[H]
 
-{\centering \includegraphics[width=5.67708in,height=\textheight]{sup_figures/Sup_modelsfit.jpg}
+{\centering \includegraphics[width=5.67708in,height=\textheight,keepaspectratio]{sup_figures/Sup_modelsfit.jpg}
 
 }
 
@@ -1109,7 +1125,7 @@ Notebook}}
 
 \begin{figure}[H]
 
-{\centering \includegraphics[width=5.67708in,height=\textheight]{sup_figures/palm_var_imp.jpg}
+{\centering \includegraphics[width=5.67708in,height=\textheight,keepaspectratio]{sup_figures/palm_var_imp.jpg}
 
 }
 
@@ -1121,7 +1137,7 @@ Notebook}}
 
 \begin{figure}[H]
 
-{\centering \includegraphics[width=5.67708in,height=\textheight]{sup_figures/mammal_var_imp.jpg}
+{\centering \includegraphics[width=5.67708in,height=\textheight,keepaspectratio]{sup_figures/mammal_var_imp.jpg}
 
 }
 
@@ -1133,7 +1149,7 @@ Notebook}}
 
 \begin{figure}[H]
 
-{\centering \includegraphics[width=5.67708in,height=\textheight]{sup_figures/palm_trait_sbm.jpg}
+{\centering \includegraphics[width=5.67708in,height=\textheight,keepaspectratio]{sup_figures/palm_trait_sbm.jpg}
 
 }
 
@@ -1145,7 +1161,7 @@ Notebook}}
 
 \begin{figure}[H]
 
-{\centering \includegraphics[width=5.67708in,height=\textheight]{sup_figures/mammal_trait_sbm.jpg}
+{\centering \includegraphics[width=5.67708in,height=\textheight,keepaspectratio]{sup_figures/mammal_trait_sbm.jpg}
 
 }
 
@@ -1157,7 +1173,7 @@ Notebook}}
 
 \begin{figure}[H]
 
-{\centering \includegraphics[width=5.67708in,height=\textheight]{sup_figures/palm_FR_detail.jpg}
+{\centering \includegraphics[width=5.67708in,height=\textheight,keepaspectratio]{sup_figures/palm_FR_detail.jpg}
 
 }
 
@@ -1169,7 +1185,7 @@ Notebook}}
 
 \begin{figure}[H]
 
-{\centering \includegraphics[width=5.67708in,height=\textheight]{sup_figures/mammal_FR_detail.jpg}
+{\centering \includegraphics[width=5.67708in,height=\textheight,keepaspectratio]{sup_figures/mammal_FR_detail.jpg}
 
 }
 
@@ -1181,7 +1197,7 @@ Notebook}}
 
 \begin{figure}[H]
 
-{\centering \includegraphics[width=5.67708in,height=\textheight]{sup_figures/fr_model_predictions.jpg}
+{\centering \includegraphics[width=5.67708in,height=\textheight,keepaspectratio]{sup_figures/fr_model_predictions.jpg}
 
 }
 
@@ -1193,7 +1209,7 @@ Notebook}}
 
 \begin{figure}[H]
 
-{\centering \includegraphics[width=5.67708in,height=\textheight]{sup_figures/sup_SBM_taxonomy.jpg}
+{\centering \includegraphics[width=5.67708in,height=\textheight,keepaspectratio]{sup_figures/sup_SBM_taxonomy.jpg}
 
 }
 
@@ -1205,7 +1221,7 @@ Notebook}}
 
 \begin{figure}[H]
 
-{\centering \includegraphics[width=5.67708in,height=\textheight]{sup_figures/fta_surface_both.jpg}
+{\centering \includegraphics[width=5.67708in,height=\textheight,keepaspectratio]{sup_figures/fta_surface_both.jpg}
 
 }
 
@@ -1231,17 +1247,17 @@ indicating where predictor-guild interactions have a statistically
 significant effect on the response variable.
 
 \begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
 \toprule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
 ~ &
-\multicolumn{4}{>{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
+\multicolumn{4}{>{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
 Dependent variable} \\
 Predictors & Estimates & std. Error & CI & p \\
 (Intercept) & 0.01 & 0.01 & -0.01~--~0.03 & 0.335 \\
@@ -1362,15 +1378,15 @@ Smooth term (PS) × SBM\\
 GX7\strut
 \end{minipage} & & & & 0.705 \\
 Observations &
-\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
 9009} \\
 R\textsuperscript{2} &
-\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
 0.012} \\
 \end{longtable}
 
 \textsubscript{Source:
-\href{https://lessardlab.github.io/FTA-Neotropics/index-preview.html}{Article
+\href{https://lessardlab.github.io/FTA-Neotropics/index.qmd.html}{Article
 Notebook}}
 
 \subsubsection{Supplementary Table 1b:}\label{supplementary-table-1b}
@@ -1389,17 +1405,17 @@ are highlighted, indicating where predictor-guild interactions have a
 statistically significant effect on the response variable.
 
 \begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
 \toprule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
 ~ &
-\multicolumn{4}{>{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
+\multicolumn{4}{>{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
 Dependent variable} \\
 Predictors & Estimates & std. Error & CI & p \\
 (Intercept) & 0.01 & 0.00 & 0.01~--~0.02 & \textbf{\textless0.001} \\
@@ -1520,15 +1536,15 @@ Smooth term (PS) × SBM\\
 GX7\strut
 \end{minipage} & & & & 0.361 \\
 Observations &
-\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
 9009} \\
 R\textsuperscript{2} &
-\multicolumn{4}{>{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
+\multicolumn{4}{>{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.8000} + 6\tabcolsep}@{}}{%
 -0.002} \\
 \end{longtable}
 
 \textsubscript{Source:
-\href{https://lessardlab.github.io/FTA-Neotropics/index-preview.html}{Article
+\href{https://lessardlab.github.io/FTA-Neotropics/index.qmd.html}{Article
 Notebook}}
 
 \phantomsection\label{refs}
@@ -1768,6 +1784,7 @@ functional diversity indices for a multifaceted framework in functional
 ecology. \emph{Ecology}, \emph{89}(8), 2290--2301.
 
 \end{CSLReferences}
+
 
 
 

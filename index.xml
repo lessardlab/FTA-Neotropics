@@ -2807,7 +2807,7 @@ and local extinctions.</p>
 </ref-list>
 </back>
 
-<sub-article article-type="notebook" id="nb-2-nb-article">
+<sub-article article-type="notebook" id="nb-4-nb-article">
 <front-stub>
 <title-group>
 <article-title>Distinct functional responses of consumers and their
@@ -3701,17 +3701,16 @@ and local extinctions.</p>
 </sec>
 <sec id="tables-nb-article">
   <title>Tables</title>
-  <sec id="nb-code-cell-1-nb-article" specific-use="notebook-code">
+  <sec specific-use="notebook-content">
   <code language="r script">library(tidyverse)</code>
-  <code language="r script">library(mgcv)</code>
-  <sec id="nb-code-cell-1-output-0-nb-article" specific-use="notebook-output">
-  <preformat>Warning: package 'ggplot2' was built under R version 4.3.3</preformat>
-  </sec>
-  <sec id="nb-code-cell-1-output-1-nb-article" specific-use="notebook-output">
-  <preformat>Warning: package 'readr' was built under R version 4.3.2</preformat>
-  </sec>
-  <sec id="nb-code-cell-1-output-2-nb-article" specific-use="notebook-output">
-  <preformat>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+  <boxed-text>
+    <preformat>Warning: package 'ggplot2' was built under R version 4.3.3</preformat>
+  </boxed-text>
+  <boxed-text>
+    <preformat>Warning: package 'readr' was built under R version 4.3.2</preformat>
+  </boxed-text>
+  <boxed-text>
+    <preformat>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.3     ✔ readr     2.1.4
 ✔ forcats   1.0.0     ✔ stringr   1.5.0
 ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
@@ -3721,9 +3720,10 @@ and local extinctions.</p>
 ✖ dplyr::filter() masks stats::filter()
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</preformat>
-  </sec>
-  <sec id="nb-code-cell-1-output-3-nb-article" specific-use="notebook-output">
-  <preformat>Loading required package: nlme
+  </boxed-text>
+  <code language="r script">library(mgcv)</code>
+  <boxed-text>
+    <preformat>Loading required package: nlme
 
 Attaching package: 'nlme'
 
@@ -3732,7 +3732,7 @@ The following object is masked from 'package:dplyr':
     collapse
 
 This is mgcv 1.8-42. For overview type 'help(&quot;mgcv-package&quot;)'.</preformat>
-  </sec>
+  </boxed-text>
   </sec>
   <p>Table 1a: Summary of parametric and smooth term coefficients for
   models predicting FTA responses to climate for all guilds. The
@@ -3743,7 +3743,7 @@ This is mgcv 1.8-42. For overview type 'help(&quot;mgcv-package&quot;)'.</prefor
   p-values under both conditions. Significant p-values highlight
   predictors or interactions with a statistically significant
   effect.</p>
-  <sec id="nb-code-cell-2-nb-article" specific-use="notebook-code">
+  <sec specific-use="notebook-content">
   <code language="r script">#| title
 
 model_gam &lt;- readRDS('model_gam_str.RDS')
@@ -3871,7 +3871,7 @@ sjPlot::tab_model(model_gam, show.se = TRUE, show.p = TRUE,   digits = 2)</code>
   freedom (Ref.df), F-statistics, and p-values under both conditions.
   Significant p-values highlight predictors or interactions with a
   statistically significant effect.</p>
-  <sec id="nb-code-cell-3-nb-article" specific-use="notebook-code">
+  <sec specific-use="notebook-content">
   <code language="r script">model_gam &lt;- readRDS('model_gam_str_nfbi.RDS')
 sjPlot::tab_model(model_gam, show.se = TRUE, show.p = TRUE,   digits = 2)</code>
   <table-wrap>
@@ -3997,7 +3997,7 @@ sjPlot::tab_model(model_gam, show.se = TRUE, show.p = TRUE,   digits = 2)</code>
   (Ref.df), F-statistics, and p-values, which indicate the statistical
   significance of each smooth term. Significant p-values suggest
   predictors with a meaningful contribution to the model.</p>
-  <sec id="nb-code-cell-4-nb-article" specific-use="notebook-code">
+  <sec specific-use="notebook-content">
   <code language="r script">model_gam &lt;- readRDS('model_gam_h2.RDS')
 sjPlot::tab_model(model_gam, show.se = TRUE, show.p = TRUE,   digits = 2)</code>
   <table-wrap>
@@ -4182,7 +4182,7 @@ sjPlot::tab_model(model_gam, show.se = TRUE, show.p = TRUE,   digits = 2)</code>
     for each interaction. Significant p-values are highlighted,
     indicating where predictor-guild interactions have a statistically
     significant effect on the response variable.</p>
-    <sec id="nb-code-cell-5-nb-article" specific-use="notebook-code">
+    <sec specific-use="notebook-content">
     <code language="r script">model_gam &lt;- readRDS('model_gam_fr_palm.RDS')
 sjPlot::tab_model(model_gam, show.se = TRUE, show.p = TRUE,   digits = 2)</code>
     <table-wrap>
@@ -4495,7 +4495,7 @@ sjPlot::tab_model(model_gam, show.se = TRUE, show.p = TRUE,   digits = 2)</code>
     for each interaction. Significant p-values are highlighted,
     indicating where predictor-guild interactions have a statistically
     significant effect on the response variable.</p>
-    <sec id="nb-code-cell-6-nb-article" specific-use="notebook-code">
+    <sec specific-use="notebook-content">
     <code language="r script">model_gam &lt;- readRDS('model_gam_fr_mammal.RDS')
 sjPlot::tab_model(model_gam, show.se = TRUE, show.p = TRUE,   digits = 2)</code>
     <table-wrap>
